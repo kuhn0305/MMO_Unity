@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using TMPro.EditorUtilities;
 using UnityEngine;
 
+
+#region 벡터 구현
 // 1. 위치 벡터
 // 2. 방향 벡터
 struct MyVector
@@ -38,42 +40,66 @@ struct MyVector
         return new MyVector(a.x * b, a.y * b, a.z * b);
     }
 }
+#endregion
+
+
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     float _speed = 10.0f;
 
-    // Start is called before the first frame update
+
     void Start()
     {
-        MyVector to = new MyVector(10.0f, 0.0f, 0.0f);
-        MyVector from = new MyVector(5.0f, 0.0f, 0.0f);
-        MyVector dir = to - from; // (5.0f, 0.0f, 0.0f) 방향벡터
 
-        dir = dir.Normalized; // (1.0f, 0.0f, 0.0f);
-
-        MyVector newPos = from + dir * _speed;
-
-        // 방향 벡터
-        // 1. 거리 (크기) 5
-        // 2. 실제 방향 ->
     }
 
-    // Update is called once per frame
+
+    float _yAngle = 0.0f;
     void Update()
     {
+        _yAngle += Time.deltaTime * 100.0f;
+        // 절대 회전값
+        //transform.eulerAngles = new Vector3(0.0f, _yAngle, 0.0f);
+        // +- delta
+        //transform.Rotate(new Vector3(0.0f, Time.deltaTime * 100.0f, 0.0f));
+
         // Local -> World :: TransformDirection
         // World -> Local :: InverseTransformDirection
 
         if (Input.GetKey(KeyCode.W))
-            transform.position += transform.TransformDirection(Vector3.forward * Time.deltaTime * _speed);
+        {
+            // 1. transform.rotation =  Quaternion.LookRotation(Vector3.forward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward), 0.2f);
+
+            // 1. transform.position += transform.TransformDirection(Vector3.forward * Time.deltaTime * _speed);
+            transform.position += Vector3.forward * Time.deltaTime * _speed;
+        }
         if (Input.GetKey(KeyCode.S))
-            transform.position += transform.TransformDirection(Vector3.back * Time.deltaTime * _speed);
+        {
+            // 1. transform.rotation = Quaternion.LookRotation(Vector3.back);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back), 0.2f);
+
+            // 1. transform.position += transform.TransformDirection(Vector3.back * Time.deltaTime * _speed);
+            transform.position += Vector3.back * Time.deltaTime * _speed;
+        }
         if (Input.GetKey(KeyCode.A))
-            transform.position += transform.TransformDirection(Vector3.left * Time.deltaTime * _speed);
+        {
+            // 1. transform.rotation = Quaternion.LookRotation(Vector3.left);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.left), 0.2f);
+
+            // 1. transform.position += transform.TransformDirection(Vector3.left * Time.deltaTime * _speed);
+            transform.position += Vector3.left * Time.deltaTime * _speed;
+        }
         if (Input.GetKey(KeyCode.D))
-            transform.position += transform.TransformDirection(Vector3.right * Time.deltaTime * _speed);
+        {
+            // 1. transform.rotation = Quaternion.LookRotation(Vector3.right);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.right), 0.2f);
+
+            // 1. transform.position += transform.TransformDirection(Vector3.right * Time.deltaTime * _speed);
+            transform.position += Vector3.right * Time.deltaTime * _speed;
+        }
 
         /*
          * 
