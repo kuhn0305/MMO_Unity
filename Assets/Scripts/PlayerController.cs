@@ -43,7 +43,6 @@ struct MyVector
 #endregion
 
 
-
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
