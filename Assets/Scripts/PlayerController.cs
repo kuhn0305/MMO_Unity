@@ -52,14 +52,15 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-
+        Managers.Input.KeyAction -= OnKeyboard;
+        Managers.Input.KeyAction += OnKeyboard;
     }
 
 
     float _yAngle = 0.0f;
     void Update()
     {
-        _yAngle += Time.deltaTime * 100.0f;
+        //_yAngle += Time.deltaTime * 100.0f;
         // 절대 회전값
         //transform.eulerAngles = new Vector3(0.0f, _yAngle, 0.0f);
         // +- delta
@@ -68,6 +69,10 @@ public class PlayerController : MonoBehaviour
         // Local -> World :: TransformDirection
         // World -> Local :: InverseTransformDirection
 
+    }
+
+    private void OnKeyboard()
+    {
         if (Input.GetKey(KeyCode.W))
         {
             // 1. transform.rotation =  Quaternion.LookRotation(Vector3.forward);
