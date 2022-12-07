@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
 using UnityEngine;
@@ -48,14 +49,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float _speed = 10.0f;
 
+    bool _moveToDest = false;
+    Vector3 _destPos;
+
     void Start()
     {
         Managers.Input.KeyAction -= OnKeyboard;
         Managers.Input.KeyAction += OnKeyboard;
+
+        Managers.Input.MouseAction -= OnMouseClicked;
+        Managers.Input.MouseAction += OnMouseClicked;
     }
 
 
-    float _yAngle = 0.0f;
+    //float _yAngle = 0.0f;
     void Update()
     {
         //_yAngle += Time.deltaTime * 100.0f;
@@ -67,7 +74,27 @@ public class PlayerController : MonoBehaviour
         // Local -> World :: TransformDirection
         // World -> Local :: InverseTransformDirection
 
+
+        if (_moveToDest)
+        {
+            if (_moveToDest)
+            {
+                Vector3 dir = _destPos - transform.position;
+
+                if (dir.magnitude < 0.0001f)
+                    _moveToDest = false;
+                else
+                {
+                    float moveDist = Mathf.Clamp(_speed * Time.deltaTime, 0, dir.magnitude);
+
+                    transform.position += dir.normalized * moveDist;
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 20 * Time.deltaTime);
+                }
+            }
+        }
     }
+
+
 
     private void OnKeyboard()
     {
@@ -104,6 +131,8 @@ public class PlayerController : MonoBehaviour
             transform.position += Vector3.right * Time.deltaTime * _speed;
         }
 
+        _moveToDest = false;
+
         /*
          * 
          * Translate는 local 좌표 기준으로 움직임을 적용한다.
@@ -117,5 +146,26 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.D))
             transform.Translate(Vector3.right * Time.deltaTime * _speed);
         */
+    }
+
+    private void OnMouseClicked(Define.MouseEvent mouseEvent)
+    {
+        if (mouseEvent != Define.MouseEvent.Click)
+            return;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(Camera.main.transform.position, ray.direction * 100f, Color.red, 1.0f);
+
+        LayerMask mask = LayerMask.GetMask("Wall");
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100f, mask))
+        {
+            _destPos = hit.point;
+            _moveToDest = true;
+
+            //Debug.Log($"Raycast Camera @ {hit.collider.gameObject.name}");
+        }
+
     }
 }
