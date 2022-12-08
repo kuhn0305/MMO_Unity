@@ -5,6 +5,16 @@ using UnityEngine;
 
 public class Util
 {
+    public static T GetOrAddComponent<T>(GameObject gameObject) where T : UnityEngine.Component
+    {
+        T component = gameObject.GetComponent<T>();
+
+        if (component == null)
+            component = gameObject.AddComponent<T>();
+
+        return component;
+    }
+
     public static T FindChild<T>(GameObject gameObject, string name = null, bool recursive = false) where T : UnityEngine.Object
     {
         if (gameObject == null)

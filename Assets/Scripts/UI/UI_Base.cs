@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI_Base : MonoBehaviour
@@ -41,4 +42,23 @@ public class UI_Base : MonoBehaviour
     protected Button GetButton(int index) { return Get<Button>(index); }
 
     protected Image GetImage(int index) { return Get<Image>(index); }
+
+    public static void AddUIEvent(GameObject gameObject, Action<PointerEventData> action, Define.UIEvent type)
+    {
+        UI_EventHandler eventHandler = Util.GetOrAddComponent<UI_EventHandler>(gameObject);
+
+        switch(type)
+        {
+            case Define.UIEvent.Click:
+                eventHandler.OnClickHandler -= action;
+                eventHandler.OnClickHandler += action;
+
+                break;
+
+            case Define.UIEvent.Drag:
+                eventHandler.OnDragHandler -= action;
+                eventHandler.OnDragHandler += action;
+                break;
+        }
+    }
 }

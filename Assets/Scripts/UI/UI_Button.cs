@@ -35,19 +35,17 @@ public class UI_Button : UI_Base
         Bind<GameObject>(typeof(GameObjects));
         Bind<Image>(typeof(Images));
 
+        GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonClicked, Define.UIEvent.Click);
 
-        GameObject gameObject =  GetImage((int)Images.ItemIcon).gameObject;
-        UI_EventHandler evt = gameObject.GetComponent<UI_EventHandler>();
-        evt.OnDragHandler += (PointerEventData data) => { evt.gameObject.transform.position = data.position; };
-        }
-
-    private void PointEventData(PointerEventData obj)
-    {
-        throw new NotImplementedException();
+        GameObject imgObject = GetImage((int)Images.ItemIcon).gameObject;
+        AddUIEvent(imgObject, (PointerEventData data) => { imgObject.transform.position = data.position; }, Define.UIEvent.Drag);
     }
 
-    public void OnButtonClicked()
-    {
+    int _score = 0;
 
+    public void OnButtonClicked(PointerEventData data)
+    {
+        _score++;
+        GetText((int)Texts.ScoreText).text = $"점수 : {_score}점";
     }
 }
